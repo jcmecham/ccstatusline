@@ -59,6 +59,12 @@ function getWindowsWidthProbeScript(): string {
 
 function probeTerminalWidth(): number | null {
     if (process.platform === 'win32') {
+        if (process.stdout.isTTY
+            && typeof process.stdout.columns === 'number'
+            && process.stdout.columns > 0) {
+            // Fast path: when ccstatusline runs interactively, skip the probe
+            return process.stdout.columns;
+        }
         return probeTerminalWidthWindows();
     }
 
